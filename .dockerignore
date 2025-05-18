@@ -1,0 +1,17 @@
+node_modules
+
+dist build
+
+.env .env.example
+
+Dockerfile docker-compose.yml .dockerignore
+
+.git .gitignore
+
+.vscode .idea *.swp *.swo
+
+logs .log npm-debug.logyarn-debug.log* yarn-error.log*
+
+coverage test tests tests
+
+tmp temp *.md LICENSE
