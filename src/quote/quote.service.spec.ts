@@ -3,6 +3,9 @@ import { QuoteService } from './quote.service';
 import { Quote } from './entities/quote.entity';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-ioredis';
 
 describe('QuoteService', () => {
   let service: QuoteService;
@@ -24,6 +27,22 @@ describe('QuoteService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+        }),
+        CacheModule.registerAsync({
+          isGlobal: true,
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: async (config: ConfigService) => ({
+            store: redisStore,
+            host: config.get('REDIS_HOST') || '127.0.0.1',
+            port: config.get<number>('REDIS_PORT') || 6379,
+            ttl: 60,
+          }),
+        }),
+      ],
       providers: [
         QuoteService,
         {

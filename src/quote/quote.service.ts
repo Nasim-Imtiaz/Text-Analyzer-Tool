@@ -27,7 +27,6 @@ export class QuoteService {
     // check cache
     try {
       const cached = await this.cacheManager.get(`quote-${id}`);
-      console.log('Getting From Cache..');
       if (cached) return cached as Quote;
     } catch (err) {
       console.error('Redis error:', err);
