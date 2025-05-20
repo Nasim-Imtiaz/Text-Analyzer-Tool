@@ -2,9 +2,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { QuoteModule } from './quote/quote.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
+import * as redisStore from 'cache-manager-ioredis';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -20,6 +22,17 @@ import { LoggerMiddleware } from './logger/logger.middleware';
       database: process.env.POSTGRES_DB ?? 'mydb',
       autoLoadEntities: true,
       synchronize: true,
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        store: redisStore,
+        host: config.get('REDIS_HOST') || '127.0.0.1',
+        port: config.get<number>('REDIS_PORT') || 6379,
+        ttl: 60,
+      }),
     }),
     QuoteModule,
   ],
