@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateQuoteDto } from './dto/create-quote.dto';
 import { UpdateQuoteDto } from './dto/update-quote.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Quote } from './entities/quote.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class QuoteService {
   constructor(
     @InjectRepository(Quote)
     private quoteRepository: Repository<Quote>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   create(createQuoteDto: CreateQuoteDto) {
@@ -20,11 +23,38 @@ export class QuoteService {
     return this.quoteRepository.find();
   }
 
-  findOne(id: string) {
-    return this.quoteRepository.findOne({ where: { id } });
+  async findOne(id: string) {
+    // check cache
+    try {
+      const cached = await this.cacheManager.get(`quote-${id}`);
+      if (cached) return cached as Quote;
+    } catch (err) {
+      console.error('Redis error:', err);
+    }
+
+    // if cache missed
+    const result = this.quoteRepository.findOne({ where: { id } });
+
+    try {
+      await this.cacheManager.set(`quote-${id}`, result, 60);
+    } catch (err) {
+      console.error('Redis set error:', err);
+    }
+
+    return result;
   }
 
   async update(id: string, updateQuoteDto: UpdateQuoteDto) {
+    // if in cache remove
+    try {
+      const cached = await this.cacheManager.get(`quote-${id}`);
+      if (cached) {
+        await this.cacheManager.del(`quote-${id}`);
+      }
+    } catch (err) {
+      console.error('Redis error:', err);
+    }
+
     await this.quoteRepository.update(id, updateQuoteDto);
     return this.findOne(id);
   }

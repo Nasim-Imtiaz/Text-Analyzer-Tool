@@ -5,9 +5,15 @@ import * as expressLayouts from 'express-ejs-layouts';
 import * as methodOverride from 'method-override';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { WinstonModule } from 'nest-winston';
+import { winstonLogger } from './logger/logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger: WinstonModule.createLogger({
+      instance: winstonLogger,
+    }),
+  });
 
   app.setViewEngine('ejs');
   app.setBaseViewsDir(join(__dirname, '..', 'views'));

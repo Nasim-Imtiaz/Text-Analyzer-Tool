@@ -33,7 +33,18 @@ export class QuoteController {
   @Render('quotes/index')
   async findAll() {
     const quotes = await this.quoteService.findAll();
-    return { title: 'All Quotes', quotes };
+
+    const analyzedQuotes = await Promise.all(
+      quotes.map(async (quote) => {
+        const analysis = this.quoteService.analyzeQuote(quote.quote);
+        return {
+          ...quote,
+          analysis,
+        };
+      }),
+    );
+
+    return { title: 'All Quotes', quotes: analyzedQuotes };
   }
 
   @Get(':id')
@@ -104,7 +115,7 @@ export class QuoteController {
     return { paragraphCount };
   }
 
-  @Get('longest-word/:id')
+  @Get('longest-words/:id')
   async getLongestWord(@Param('id') id: string) {
     const data = await this.quoteService.findOne(id);
 

@@ -8,30 +8,50 @@
         </a>
     </div>
 </div>
-<ul class="space-y-4">
-    <% quotes.forEach(quote => { %>
-        <li class="p-4 rounded border border-1">
-            <div class="grid grid-cols-12">
-                <div class="col-span-10">
-                    <p class="italic text-md mb-2 break-words"><%= quote.quote %></p>
-                </div>
-                <div class="col-span-2">
-                    <div class="flex gap-3 justify-end">
-                        <a href="/quotes/<%= quote.id %>" title="Edit" class="text-gray-600 hover:text-blue-600">
-                            <img src="/pencil.png" class="w-4 h-4" alt="">
-                        </a>
-                        <form action="/quotes/<%= quote.id %>?_method=DELETE" method="POST"
-                              onsubmit="return confirm('Are you sure you want to delete this quote?')">
-                            <button type="submit" title="Delete" class="text-gray-600 hover:text-red-600">
-                                <img src="/delete.png" class="w-4 h-4" alt="">
-                            </button>
-                        </form>
+<% if (quotes && quotes.length > 0) { %>
+    <ul class="space-y-4">
+        <% quotes.forEach(quote => { %>
+            <li class="p-4 rounded border border-1">
+                <div class="grid grid-cols-12">
+                    <div class="col-span-10">
+                        <p class="italic text-md mb-2 break-words"><%- quote.quote.replace(/\n/g, '<br>') %></p>
+                    </div>
+                    <div class="col-span-2">
+                        <div class="flex gap-3 justify-end">
+                            <a href="/quotes/<%= quote.id %>" title="Edit" class="text-gray-600 hover:text-blue-600">
+                                <img src="/pencil.png" class="w-4 h-4" alt="">
+                            </a>
+                            <form action="/quotes/<%= quote.id %>?_method=DELETE" method="POST"
+                                  onsubmit="return confirm('Are you sure you want to delete this quote?')">
+                                <button type="submit" title="Delete" class="text-gray-600 hover:text-red-600">
+                                    <img src="/delete.png" class="w-4 h-4" alt="">
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-span-12">
+                        <p class="text-sm mt-1">- <%= quote.author ? quote.author : 'Unknown' %></p>
+                    </div>
+                    <div class="col-span-12 py-3">
+                        <hr>
+                    </div>
+                    <div class="col-span-12 pb-1">
+                        <div class="flex flex-wrap justify-between text-sm text-gray-600 font-light gap-x-4 gap-y-2">
+                            <div><span class="font-medium">Words:</span> <%= quote.analysis.wordCount %></div>
+                            <div><span class="font-medium">Characters:</span> <%= quote.analysis.charCount %></div>
+                            <div><span class="font-medium">Sentences:</span> <%= quote.analysis.sentenceCount %></div>
+                            <div><span class="font-medium">Paragraphs:</span> <%= quote.analysis.paragraphCount %></div>
+                        </div>
+                    </div>
+                    <div class="col-span-12">
+                        <p class="text-sm text-gray-600 font-light break-words"><span class="font-medium">Long Words:</span> <%= quote.analysis.longestWord.join(', ') %></p>
                     </div>
                 </div>
-                <div class="col-span-12">
-                    <p class="text-sm ">- <%= quote.author ? quote.author : 'Unknown' %></p>
-                </div>
-            </div>
-        </li>
-    <% }) %>
-</ul>
+            </li>
+        <% }) %>
+    </ul>
+<% } else { %>
+    <div class="p-4 rounded border text-center text-gray-500 border-dashed border-2">
+        No quotations found.
+    </div>
+<% } %>
