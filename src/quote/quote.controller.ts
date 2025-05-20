@@ -54,4 +54,78 @@ export class QuoteController {
   remove(@Param('id') id: string) {
     return this.quoteService.remove(id);
   }
+
+  @Get('word-count/:id')
+  async getWordCount(@Param('id') id: string) {
+    const data = await this.quoteService.findOne(id);
+
+    if (!data) {
+      return;
+    }
+
+    const cleaned = this.quoteService.cleanText(data.quote);
+    const words = this.quoteService.getWords(cleaned);
+    return { wordCount: words.length };
+  }
+
+  @Get('character-count/:id')
+  async getCharacterCount(@Param('id') id: string) {
+    const data = await this.quoteService.findOne(id);
+
+    if (!data) {
+      return;
+    }
+
+    const cleaned = this.quoteService.cleanText(data.quote);
+    const charCount = this.quoteService.getCharacterCount(cleaned);
+    return { charCount };
+  }
+
+  @Get('sentence-count/:id')
+  async getSentenceCount(@Param('id') id: string) {
+    const data = await this.quoteService.findOne(id);
+
+    if (!data) {
+      return;
+    }
+    const sentenceCount = this.quoteService.getSentenceCount(data.quote);
+    return { sentenceCount };
+  }
+
+  @Get('paragraph-count/:id')
+  async getParagraphCount(@Param('id') id: string) {
+    const data = await this.quoteService.findOne(id);
+
+    if (!data) {
+      return;
+    }
+
+    const paragraphCount = this.quoteService.getParagraphCount(data.quote);
+    return { paragraphCount };
+  }
+
+  @Get('longest-word/:id')
+  async getLongestWord(@Param('id') id: string) {
+    const data = await this.quoteService.findOne(id);
+
+    if (!data) {
+      return;
+    }
+
+    const cleaned = this.quoteService.cleanText(data.quote);
+    const words = this.quoteService.getWords(cleaned);
+    const longestWord = this.quoteService.getLongestWord(words);
+    return { longestWord };
+  }
+
+  @Get('/analyze/:id')
+  async analyzeQuote(@Param('id') id: string) {
+    const data = await this.quoteService.findOne(id);
+
+    if (!data) {
+      return;
+    }
+
+    return this.quoteService.analyzeQuote(data.quote);
+  }
 }
