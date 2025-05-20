@@ -3,6 +3,9 @@
 <form method="POST" action="/quotes/<%= quote.id %>?_method=PATCH" class="py-3">
     <input name="author" class="border p-2 w-full mb-4 rounded" value="<%= quote.author %>" />
     <textarea rows="10" name="quote" placeholder="Quote" class="border p-2 w-full mb-4 rounded" required><%= quote.quote %></textarea>
-    <button class="bg-black text-white px-4 py-2 rounded">Update</button>
+    <div class="flex space-x-2">
+        <button class="bg-black text-white px-4 py-2 rounded">Update</button>
+        <a href="/quotes" class="bg-white text-black border border-black px-4 py-2 rounded inline-block">Back</a>
+    </div>
 </form>
 

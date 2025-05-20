@@ -88,3 +88,7 @@ docker-compose down
 
 - Make sure Docker is running.
 - Ensure the ports defined in `.env` or `docker-compose.yml` are not already in use.
+
+
+## Home Screen Preview
+<img src="https://i.postimg.cc/MKRPJfPZ/Screenshot-at-May-20-17-28-02.png">
