@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as expressLayouts from 'express-ejs-layouts';
+import * as methodOverride from 'method-override';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -15,6 +16,8 @@ async function bootstrap() {
   app.set('layout', 'layout');
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
+
+  app.use(methodOverride('_method'));
 
   app.useGlobalPipes(
     new ValidationPipe({

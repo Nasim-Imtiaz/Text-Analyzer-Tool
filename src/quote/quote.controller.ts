@@ -7,6 +7,7 @@ import {
   Delete,
   Render,
   Redirect,
+  Patch,
 } from '@nestjs/common';
 import { QuoteService } from './quote.service';
 import { CreateQuoteDto } from './dto/create-quote.dto';
@@ -42,7 +43,7 @@ export class QuoteController {
     return { title: 'Update Quote', quote };
   }
 
-  @Post(':id')
+  @Patch(':id')
   @Redirect('/quotes')
   update(@Param('id') id: string, @Body() updateQuoteDto: UpdateQuoteDto) {
     return this.quoteService.update(id, updateQuoteDto);
