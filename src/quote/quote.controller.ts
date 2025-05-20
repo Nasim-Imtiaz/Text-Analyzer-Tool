@@ -104,7 +104,7 @@ export class QuoteController {
     return { paragraphCount };
   }
 
-  @Get('longest-word/:id')
+  @Get('longest-words/:id')
   async getLongestWord(@Param('id') id: string) {
     const data = await this.quoteService.findOne(id);
 
